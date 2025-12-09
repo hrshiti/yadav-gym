@@ -6,7 +6,9 @@ const AdminMembers = () => {
   const location = useLocation();
   const [viewMode, setViewMode] = useState('list'); // 'list', 'add', 'edit'
   const [editingMember, setEditingMember] = useState(null);
+  const [selectedMember, setSelectedMember] = useState(null); // For detail view
   const [searchQuery, setSearchQuery] = useState('');
+  const [memberViewTab, setMemberViewTab] = useState('add-member'); // 'add-member', 'active-members', 'total-members', 'not-active-members'
   const [members, setMembers] = useState([
     {
       id: 1,
@@ -66,10 +68,32 @@ const AdminMembers = () => {
 
   const trainers = ['Rajesh Kumar', 'Priya Sharma', 'Anjali Singh', 'Vikram Mehta'];
 
+  // Sample data for tabs
+  const newRegistrations = [
+    { id: 1, name: 'Rajesh Kumar', email: 'rajesh@example.com', date: '2024-01-15', status: 'Active' },
+    { id: 2, name: 'Priya Sharma', email: 'priya@example.com', date: '2024-01-14', status: 'Active' },
+    { id: 3, name: 'Amit Singh', email: 'amit@example.com', date: '2024-01-13', status: 'Pending' },
+    { id: 4, name: 'Sneha Patel', email: 'sneha@example.com', date: '2024-01-12', status: 'Active' },
+  ];
+
+  const lowAttendanceAlerts = [
+    { id: 1, name: 'Vikram Mehta', days: 3, lastVisit: '2024-01-12' },
+    { id: 2, name: 'Anjali Desai', days: 5, lastVisit: '2024-01-10' },
+    { id: 3, name: 'Rohit Gupta', days: 7, lastVisit: '2024-01-08' },
+  ];
+
+  const trainerPerformance = [
+    { id: 1, name: 'Priya Sharma', score: 95, members: 45, rating: 4.8 },
+    { id: 2, name: 'Rajesh Kumar', score: 92, members: 38, rating: 4.7 },
+    { id: 3, name: 'Anjali Singh', score: 88, members: 32, rating: 4.6 },
+    { id: 4, name: 'Vikram Mehta', score: 85, members: 28, rating: 4.5 },
+  ];
+
   // Check if we're on add route
   useEffect(() => {
     if (location.pathname === '/admin/members/add') {
       setViewMode('add');
+      setMemberViewTab('add-member');
       setFormData({
         name: '',
         email: '',
@@ -83,6 +107,18 @@ const AdminMembers = () => {
       setViewMode('list');
     }
   }, [location.pathname]);
+
+  // Filter members based on active tab
+  const getFilteredMembersByTab = () => {
+    if (memberViewTab === 'active-members') {
+      return members.filter(m => m.status === 'Active');
+    } else if (memberViewTab === 'not-active-members') {
+      return members.filter(m => m.status !== 'Active');
+    } else if (memberViewTab === 'total-members') {
+      return members;
+    }
+    return members;
+  };
 
   // Generate Member ID
   const generateMemberId = () => {
@@ -144,12 +180,17 @@ const AdminMembers = () => {
     });
   };
 
-  // Filter members
-  const filteredMembers = members.filter(member =>
-    member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    member.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    member.memberId.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Filter members based on search and tab
+  const getFilteredMembers = () => {
+    let tabFiltered = getFilteredMembersByTab();
+    return tabFiltered.filter(member =>
+      member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      member.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      member.memberId.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  };
+
+  const filteredMembers = getFilteredMembers();
 
   return (
     <div className="space-y-4 sm:space-y-6 overflow-x-hidden">
@@ -171,14 +212,81 @@ const AdminMembers = () => {
                 photo: null,
               });
               setViewMode('add');
+              setMemberViewTab('add-member');
             }}
-            className="w-full sm:w-auto px-4 py-2 bg-gradient-primary text-white rounded-lg font-medium text-sm sm:text-base shadow-md hover:shadow-lg transition-all"
+            className="w-full sm:w-auto px-4 py-2 text-white rounded-lg font-medium text-sm sm:text-base shadow-md hover:shadow-lg transition-all"
+            style={{
+              background: 'linear-gradient(135deg, #305EFF, #8A4CFF)',
+            }}
             whileTap={{ scale: 0.95 }}
           >
             + Add Member
           </motion.button>
         )}
       </div>
+
+      {/* Member View Tabs */}
+      <motion.div
+        className="bg-white rounded-xl sm:rounded-2xl p-1 shadow-sm border border-gray-100"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <div className="flex gap-1 overflow-x-auto scrollbar-hide relative">
+          {[
+            { id: 'add-member', label: 'Add Member' },
+            { id: 'active-members', label: 'Active Members' },
+            { id: 'total-members', label: 'Total Members' },
+            { id: 'not-active-members', label: 'Not Active Members' },
+          ].map((tab) => (
+            <motion.button
+              key={tab.id}
+              onClick={() => {
+                setMemberViewTab(tab.id);
+                if (tab.id === 'add-member') {
+                  setViewMode('add');
+                  setFormData({
+                    name: '',
+                    email: '',
+                    phone: '',
+                    joinDate: new Date().toISOString().split('T')[0],
+                    status: 'Active',
+                    trainer: '',
+                    photo: null,
+                  });
+                } else {
+                  setViewMode('list');
+                }
+              }}
+              className={`flex-1 min-w-[120px] py-2 sm:py-2.5 px-3 sm:px-4 rounded-lg font-medium text-xs sm:text-sm transition-all relative whitespace-nowrap ${
+                memberViewTab === tab.id
+                  ? 'text-white'
+                  : 'text-text-light hover:bg-gray-50'
+              }`}
+              whileTap={{ scale: 0.95 }}
+            >
+              {memberViewTab === tab.id && (
+                <motion.div
+                  layoutId="memberViewTabIndicator"
+                  className="absolute inset-0 rounded-lg"
+                  initial={false}
+                  transition={{
+                    type: "spring",
+                    stiffness: 500,
+                    damping: 30
+                  }}
+                  style={{
+                    background: 'linear-gradient(135deg, #305EFF, #8A4CFF)',
+                    zIndex: 0,
+                  }}
+                />
+              )}
+              <span className="relative z-10">
+                {tab.label}
+              </span>
+            </motion.button>
+          ))}
+        </div>
+      </motion.div>
 
       {/* Search Bar - Only show in list view */}
       {viewMode === 'list' && (
@@ -204,7 +312,7 @@ const AdminMembers = () => {
 
       {/* Form View */}
       <AnimatePresence mode="wait">
-        {(viewMode === 'add' || viewMode === 'edit') && (
+        {((viewMode === 'add' && memberViewTab === 'add-member') || viewMode === 'edit') && (
           <motion.div
             key={viewMode}
             initial={{ opacity: 0, x: 20 }}
@@ -355,7 +463,7 @@ const AdminMembers = () => {
       </AnimatePresence>
 
       {/* Members List */}
-      {viewMode === 'list' && (
+      {viewMode === 'list' && memberViewTab !== 'add-member' && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -363,23 +471,25 @@ const AdminMembers = () => {
         >
           <div className="mb-4">
             <h3 className="text-lg sm:text-xl font-heading font-bold text-text-dark">
-              All Members ({filteredMembers.length})
+              {memberViewTab === 'active-members' ? 'Active Members' : 
+               memberViewTab === 'not-active-members' ? 'Not Active Members' : 
+               'Total Members'} ({filteredMembers.length})
             </h3>
           </div>
 
-          {/* Members Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+          {/* Members List - Compact Mobile View */}
+          <div className="space-y-2 sm:space-y-3">
             {filteredMembers.map((member, index) => (
               <motion.div
                 key={member.id}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                className="bg-gray-50 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-gray-200 hover:shadow-md transition-all"
+                transition={{ delay: index * 0.03 }}
+                className="bg-gray-50 rounded-lg sm:rounded-xl p-2 sm:p-3 border border-gray-200 hover:shadow-sm transition-all"
               >
-                <div className="flex items-start gap-3 sm:gap-4">
+                <div className="flex items-center gap-2 sm:gap-3">
                   {/* Photo */}
-                  <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg sm:rounded-xl overflow-hidden bg-gradient-primary flex-shrink-0">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg overflow-hidden bg-gradient-primary flex-shrink-0">
                     <img
                       src={member.photo}
                       alt={member.name}
@@ -390,15 +500,13 @@ const AdminMembers = () => {
                     />
                   </div>
 
-                  {/* Info */}
+                  {/* Info - Compact */}
                   <div className="flex-1 min-w-0">
-                    <h4 className="text-sm sm:text-base font-heading font-semibold text-text-dark truncate">
-                      {member.name}
-                    </h4>
-                    <p className="text-xs text-text-light truncate">{member.email}</p>
-                    <p className="text-xs text-text-light mt-1">ID: {member.memberId}</p>
-                    <div className="flex items-center gap-2 mt-2">
-                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h4 className="text-xs sm:text-sm font-heading font-semibold text-text-dark truncate">
+                        {member.name}
+                      </h4>
+                      <span className={`px-1.5 sm:px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-medium flex-shrink-0 ${
                         member.status === 'Active' ? 'bg-success/20 text-success' :
                         member.status === 'Pending' ? 'bg-warning/20 text-warning' :
                         'bg-gray-200 text-text-light'
@@ -406,24 +514,20 @@ const AdminMembers = () => {
                         {member.status}
                       </span>
                     </div>
+                    <p className="text-[10px] sm:text-xs text-text-light truncate mt-0.5">{member.email}</p>
+                    <p className="text-[10px] sm:text-xs text-text-light">ID: {member.memberId}</p>
                   </div>
-                </div>
 
-                {/* Actions */}
-                <div className="flex items-center gap-2 mt-3 sm:mt-4 pt-3 border-t border-gray-200">
+                  {/* Detail Button */}
                   <motion.button
-                    onClick={() => handleEdit(member)}
-                    className="flex-1 px-2 sm:px-3 py-1.5 sm:py-2 bg-primary-blue/10 text-primary-blue rounded-lg text-xs sm:text-sm font-medium hover:bg-primary-blue/20 transition-all"
+                    onClick={() => setSelectedMember(member)}
+                    className="px-2 sm:px-3 py-1.5 sm:py-2 bg-gradient-primary text-white rounded-lg text-[10px] sm:text-xs font-medium hover:shadow-md transition-all flex-shrink-0"
+                    style={{
+                      background: 'linear-gradient(135deg, #305EFF, #8A4CFF)',
+                    }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    Edit
-                  </motion.button>
-                  <motion.button
-                    onClick={() => handleDelete(member.id)}
-                    className="flex-1 px-2 sm:px-3 py-1.5 sm:py-2 bg-danger/10 text-danger rounded-lg text-xs sm:text-sm font-medium hover:bg-danger/20 transition-all"
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    Delete
+                    Detail
                   </motion.button>
                 </div>
               </motion.div>
@@ -437,6 +541,120 @@ const AdminMembers = () => {
           )}
         </motion.div>
       )}
+
+      {/* Member Detail Modal */}
+      <AnimatePresence>
+        {selectedMember && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedMember(null)}
+              className="fixed inset-0 bg-black/50 z-50"
+            />
+            
+            {/* Modal */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="fixed inset-4 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-2xl z-50 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between mb-4 sm:mb-6 pb-4 border-b border-gray-200">
+                <h3 className="text-lg sm:text-xl font-heading font-bold text-text-dark">
+                  Member Details
+                </h3>
+                <motion.button
+                  onClick={() => setSelectedMember(null)}
+                  className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <svg className="w-5 h-5 text-text-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </motion.button>
+              </div>
+
+              {/* Member Details */}
+              <div className="space-y-4 sm:space-y-6">
+                {/* Photo and Basic Info */}
+                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden bg-gradient-primary flex-shrink-0">
+                    <img
+                      src={selectedMember.photo}
+                      alt={selectedMember.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.src = 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80';
+                      }}
+                    />
+                  </div>
+                  <div className="flex-1 text-center sm:text-left">
+                    <h4 className="text-lg sm:text-xl font-heading font-bold text-text-dark mb-1">
+                      {selectedMember.name}
+                    </h4>
+                    <p className="text-sm text-text-light mb-2">{selectedMember.email}</p>
+                    <span className={`inline-block px-3 py-1 rounded-full text-xs sm:text-sm font-medium ${
+                      selectedMember.status === 'Active' ? 'bg-success/20 text-success' :
+                      selectedMember.status === 'Pending' ? 'bg-warning/20 text-warning' :
+                      'bg-gray-200 text-text-light'
+                    }`}>
+                      {selectedMember.status}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Details Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                  <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
+                    <p className="text-xs sm:text-sm text-text-light mb-1">Member ID</p>
+                    <p className="text-sm sm:text-base font-semibold text-text-dark">{selectedMember.memberId}</p>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
+                    <p className="text-xs sm:text-sm text-text-light mb-1">Phone Number</p>
+                    <p className="text-sm sm:text-base font-semibold text-text-dark">{selectedMember.phone}</p>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
+                    <p className="text-xs sm:text-sm text-text-light mb-1">Join Date</p>
+                    <p className="text-sm sm:text-base font-semibold text-text-dark">{selectedMember.joinDate}</p>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
+                    <p className="text-xs sm:text-sm text-text-light mb-1">Assigned Trainer</p>
+                    <p className="text-sm sm:text-base font-semibold text-text-dark">{selectedMember.trainer || 'Not Assigned'}</p>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-4 border-t border-gray-200">
+                  <motion.button
+                    onClick={() => {
+                      handleEdit(selectedMember);
+                      setSelectedMember(null);
+                    }}
+                    className="flex-1 px-4 py-2.5 bg-primary-blue/10 text-primary-blue rounded-lg text-sm font-medium hover:bg-primary-blue/20 transition-all"
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    Edit Member
+                  </motion.button>
+                  <motion.button
+                    onClick={() => {
+                      handleDelete(selectedMember.id);
+                      setSelectedMember(null);
+                    }}
+                    className="flex-1 px-4 py-2.5 bg-danger/10 text-danger rounded-lg text-sm font-medium hover:bg-danger/20 transition-all"
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    Delete Member
+                  </motion.button>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

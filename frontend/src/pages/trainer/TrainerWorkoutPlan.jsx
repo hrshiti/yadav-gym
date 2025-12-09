@@ -300,13 +300,17 @@ const TrainerWorkoutPlan = () => {
                   <motion.button
                     type="button"
                     onClick={addWorkoutExercise}
-                    className="px-4 py-2 bg-gradient-primary text-white rounded-lg text-sm font-medium flex items-center gap-2"
+                    className="px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-md hover:shadow-lg transition-all"
+                    style={{
+                      background: 'linear-gradient(135deg, #305EFF, #8A4CFF)',
+                      color: '#FFFFFF'
+                    }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: '#FFFFFF' }}>
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                     </svg>
-                    Add Exercise
+                    <span style={{ color: '#FFFFFF' }}>Add Exercise</span>
                   </motion.button>
                 </div>
 
@@ -434,13 +438,17 @@ const TrainerWorkoutPlan = () => {
                   <motion.button
                     type="button"
                     onClick={addDietMeal}
-                    className="px-4 py-2 bg-gradient-primary text-white rounded-lg text-sm font-medium flex items-center gap-2"
+                    className="px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-md hover:shadow-lg transition-all"
+                    style={{
+                      background: 'linear-gradient(135deg, #305EFF, #8A4CFF)',
+                      color: '#FFFFFF'
+                    }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: '#FFFFFF' }}>
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                     </svg>
-                    Add Meal
+                    <span style={{ color: '#FFFFFF' }}>Add Meal</span>
                   </motion.button>
                 </div>
 
@@ -556,10 +564,10 @@ const TrainerWorkoutPlan = () => {
           <motion.button
             type="submit"
             disabled={!selectedMember || isSubmitting}
-            className={`w-full py-4 rounded-xl font-heading font-semibold text-white transition-all mb-6 ${
+            className={`w-full py-4 rounded-xl font-heading font-semibold transition-all mb-6 ${
               selectedMember && !isSubmitting
-                ? 'bg-gradient-primary shadow-lg hover:shadow-xl hover:shadow-primary-blue/50'
-                : 'bg-gray-300 cursor-not-allowed'
+                ? 'bg-gradient-primary shadow-lg hover:shadow-xl hover:shadow-primary-blue/50 text-white'
+                : 'bg-gray-300 cursor-not-allowed text-gray-600'
             }`}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -569,7 +577,9 @@ const TrainerWorkoutPlan = () => {
             {isSubmitting ? (
               <div className="flex items-center justify-center gap-2">
                 <motion.div
-                  className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
+                  className={`w-5 h-5 border-2 border-t-transparent rounded-full ${
+                    selectedMember && !isSubmitting ? 'border-white' : 'border-gray-600'
+                  }`}
                   animate={{ rotate: 360 }}
                   transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                 />

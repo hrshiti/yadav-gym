@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
-  const [activeView, setActiveView] = useState('members'); // 'members' or 'trainers'
+  const [activeTab, setActiveTab] = useState('weight-progress'); // 'weight-progress', 'registrations', 'attendance', 'trainer-performance'
   const [counts, setCounts] = useState({
     totalMembers: 0,
     activeMembers: 0,
@@ -114,62 +114,60 @@ const AdminDashboard = () => {
     { id: 3, name: 'Rohit Gupta', days: 7, lastVisit: '2024-01-08' },
   ];
 
+  // Trainer Performance
+  const trainerPerformance = [
+    { id: 1, name: 'Priya Sharma', score: 95, members: 45, rating: 4.8 },
+    { id: 2, name: 'Rajesh Kumar', score: 92, members: 38, rating: 4.7 },
+    { id: 3, name: 'Anjali Singh', score: 88, members: 32, rating: 4.6 },
+    { id: 4, name: 'Vikram Mehta', score: 85, members: 28, rating: 4.5 },
+  ];
+
   return (
     <div className="space-y-3 sm:space-y-4 overflow-x-hidden">
-      {/* View Switcher Slider */}
+      {/* Tabs Section */}
       <motion.div
         className="bg-white rounded-xl sm:rounded-2xl p-1 shadow-sm border border-gray-100 mb-3 sm:mb-4"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <div className="flex gap-1">
-          <motion.button
-            onClick={() => setActiveView('members')}
-            className={`flex-1 py-2 sm:py-2.5 px-3 sm:px-4 rounded-lg font-medium text-xs sm:text-sm transition-all relative ${
-              activeView === 'members'
-                ? 'text-primary-blue'
-                : 'text-text-light'
-            }`}
-            whileTap={{ scale: 0.95 }}
-          >
-            Members
-            {activeView === 'members' && (
-              <motion.div
-                layoutId="activeSlider"
-                className="absolute inset-0 bg-gradient-primary rounded-lg -z-10"
-                initial={false}
-                transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-              />
-            )}
-            {activeView === 'members' && (
-              <span className="relative z-10 text-white">Members</span>
-            )}
-          </motion.button>
-          <motion.button
-            onClick={() => {
-              setActiveView('trainers');
-              navigate('/admin/trainers');
-            }}
-            className={`flex-1 py-2 sm:py-2.5 px-3 sm:px-4 rounded-lg font-medium text-xs sm:text-sm transition-all relative ${
-              activeView === 'trainers'
-                ? 'text-primary-blue'
-                : 'text-text-light'
-            }`}
-            whileTap={{ scale: 0.95 }}
-          >
-            Trainers
-            {activeView === 'trainers' && (
-              <motion.div
-                layoutId="activeSlider"
-                className="absolute inset-0 bg-gradient-primary rounded-lg -z-10"
-                initial={false}
-                transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-              />
-            )}
-            {activeView === 'trainers' && (
-              <span className="relative z-10 text-white">Trainers</span>
-            )}
-          </motion.button>
+        <div className="flex gap-1 overflow-x-auto scrollbar-hide relative">
+          {[
+            { id: 'weight-progress', label: 'Weight Progress Graph' },
+            { id: 'registrations', label: 'New Registrations List' },
+            { id: 'attendance', label: 'Low Attendance Alerts' },
+            { id: 'trainer-performance', label: 'Trainer Performance Score' },
+          ].map((tab) => (
+            <motion.button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex-1 min-w-[150px] py-2 sm:py-2.5 px-3 sm:px-4 rounded-lg font-medium text-xs sm:text-sm transition-all relative whitespace-nowrap ${
+                activeTab === tab.id
+                  ? 'text-white'
+                  : 'text-text-light hover:bg-gray-50'
+              }`}
+              whileTap={{ scale: 0.95 }}
+            >
+              {activeTab === tab.id && (
+                <motion.div
+                  layoutId="activeTabIndicator"
+                  className="absolute inset-0 rounded-lg"
+                  initial={false}
+                  transition={{
+                    type: "spring",
+                    stiffness: 500,
+                    damping: 30
+                  }}
+                  style={{
+                    background: 'linear-gradient(135deg, #305EFF, #8A4CFF)',
+                    zIndex: 0,
+                  }}
+                />
+              )}
+              <span className="relative z-10">
+                {tab.label}
+              </span>
+            </motion.button>
+          ))}
         </div>
       </motion.div>
 
@@ -205,109 +203,145 @@ const AdminDashboard = () => {
         ))}
       </div>
 
-      {/* Charts Section - Placeholder */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-        {/* Weight Progress Chart */}
-        <motion.div
-          className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100"
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.4 }}
-        >
-          <h3 className="text-base sm:text-lg font-heading font-bold text-text-dark mb-3 sm:mb-4">Weight Progress</h3>
-          <div className="h-48 sm:h-64 flex items-center justify-center bg-gray-50 rounded-lg">
-            <p className="text-xs sm:text-sm text-text-light text-center px-2">Chart will be implemented with Recharts</p>
-          </div>
-        </motion.div>
+      {/* Tab Content */}
+      <AnimatePresence mode="wait">
+        {activeTab === 'weight-progress' && (
+          <motion.div
+            key="weight-progress"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100"
+          >
+            <h3 className="text-base sm:text-lg font-heading font-bold text-text-dark mb-3 sm:mb-4">Weight Progress Graph</h3>
+            <div className="h-48 sm:h-64 flex items-center justify-center bg-gray-50 rounded-lg">
+              <p className="text-xs sm:text-sm text-text-light text-center px-2">Weight Progress Chart will be implemented with Recharts</p>
+            </div>
+          </motion.div>
+        )}
 
-        {/* Attendance Chart */}
-        <motion.div
-          className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100"
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.5 }}
-        >
-          <h3 className="text-base sm:text-lg font-heading font-bold text-text-dark mb-3 sm:mb-4">Attendance Chart</h3>
-          <div className="h-48 sm:h-64 flex items-center justify-center bg-gray-50 rounded-lg">
-            <p className="text-xs sm:text-sm text-text-light text-center px-2">Chart will be implemented with Recharts</p>
-          </div>
-        </motion.div>
-      </div>
-
-      {/* New Registrations Table */}
-      <motion.div
-        className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100 overflow-x-auto"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6 }}
-      >
-        <h3 className="text-base sm:text-lg font-heading font-bold text-text-dark mb-3 sm:mb-4">New Registrations</h3>
-        <div className="overflow-x-auto -mx-4 sm:mx-0">
-          <div className="inline-block min-w-full align-middle">
-            <table className="min-w-full">
-              <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="text-left py-2 sm:py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-text-dark">Name</th>
-                  <th className="text-left py-2 sm:py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-text-dark">Email</th>
-                  <th className="text-left py-2 sm:py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-text-dark">Date</th>
-                  <th className="text-left py-2 sm:py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-text-dark">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {newRegistrations.map((member, index) => (
-                  <motion.tr
-                    key={member.id}
-                    className="border-b border-gray-100 hover:bg-gray-50"
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.7 + index * 0.1 }}
-                  >
-                    <td className="py-2 sm:py-3 px-2 sm:px-4 text-xs sm:text-sm text-text-dark">{member.name}</td>
-                    <td className="py-2 sm:py-3 px-2 sm:px-4 text-xs sm:text-sm text-text-light">{member.email}</td>
-                    <td className="py-2 sm:py-3 px-2 sm:px-4 text-xs sm:text-sm text-text-light">{member.date}</td>
-                    <td className="py-2 sm:py-3 px-2 sm:px-4">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        member.status === 'Active' ? 'bg-success/20 text-success' : 'bg-warning/20 text-warning'
-                      }`}>
-                        {member.status}
-                      </span>
-                    </td>
-                  </motion.tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Low Attendance Alerts */}
-      <motion.div
-        className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.8 }}
-      >
-        <h3 className="text-base sm:text-lg font-heading font-bold text-text-dark mb-3 sm:mb-4">Low Attendance Alerts</h3>
-        <div className="space-y-2 sm:space-y-3">
-          {lowAttendanceAlerts.map((alert, index) => (
-            <motion.div
-              key={alert.id}
-              className="flex items-center justify-between p-3 sm:p-4 bg-danger/10 rounded-lg border border-danger/20"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.9 + index * 0.1 }}
-            >
-              <div className="flex-1 min-w-0">
-                <h4 className="text-xs sm:text-sm font-semibold text-text-dark truncate">{alert.name}</h4>
-                <p className="text-xs text-text-light">Last visit: {alert.lastVisit}</p>
+        {activeTab === 'registrations' && (
+          <motion.div
+            key="registrations"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100 overflow-x-auto"
+          >
+            <h3 className="text-base sm:text-lg font-heading font-bold text-text-dark mb-3 sm:mb-4">New Registrations List</h3>
+            <div className="overflow-x-auto -mx-4 sm:mx-0">
+              <div className="inline-block min-w-full align-middle">
+                <table className="min-w-full">
+                  <thead>
+                    <tr className="border-b border-gray-200">
+                      <th className="text-left py-2 sm:py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-text-dark">Name</th>
+                      <th className="text-left py-2 sm:py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-text-dark">Email</th>
+                      <th className="text-left py-2 sm:py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-text-dark">Date</th>
+                      <th className="text-left py-2 sm:py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-text-dark">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {newRegistrations.map((member, index) => (
+                      <motion.tr
+                        key={member.id}
+                        className="border-b border-gray-100 hover:bg-gray-50"
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                      >
+                        <td className="py-2 sm:py-3 px-2 sm:px-4 text-xs sm:text-sm text-text-dark">{member.name}</td>
+                        <td className="py-2 sm:py-3 px-2 sm:px-4 text-xs sm:text-sm text-text-light">{member.email}</td>
+                        <td className="py-2 sm:py-3 px-2 sm:px-4 text-xs sm:text-sm text-text-light">{member.date}</td>
+                        <td className="py-2 sm:py-3 px-2 sm:px-4">
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            member.status === 'Active' ? 'bg-success/20 text-success' : 'bg-warning/20 text-warning'
+                          }`}>
+                            {member.status}
+                          </span>
+                        </td>
+                      </motion.tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-              <span className="px-2 sm:px-3 py-1 bg-danger/20 text-danger rounded-full text-xs font-medium ml-2 flex-shrink-0">
-                {alert.days} days
-              </span>
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
+            </div>
+          </motion.div>
+        )}
+
+        {activeTab === 'attendance' && (
+          <motion.div
+            key="attendance"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100"
+          >
+            <h3 className="text-base sm:text-lg font-heading font-bold text-text-dark mb-3 sm:mb-4">Low Attendance Alerts</h3>
+            <div className="space-y-2 sm:space-y-3">
+              {lowAttendanceAlerts.map((alert, index) => (
+                <motion.div
+                  key={alert.id}
+                  className="flex items-center justify-between p-3 sm:p-4 bg-danger/10 rounded-lg border border-danger/20"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-xs sm:text-sm font-semibold text-text-dark truncate">{alert.name}</h4>
+                    <p className="text-xs text-text-light">Last visit: {alert.lastVisit}</p>
+                  </div>
+                  <span className="px-2 sm:px-3 py-1 bg-danger/20 text-danger rounded-full text-xs font-medium ml-2 flex-shrink-0">
+                    {alert.days} days
+                  </span>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
+        {activeTab === 'trainer-performance' && (
+          <motion.div
+            key="trainer-performance"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100"
+          >
+            <h3 className="text-base sm:text-lg font-heading font-bold text-text-dark mb-3 sm:mb-4">Trainer Performance Score</h3>
+            <div className="space-y-3 sm:space-y-4">
+              {trainerPerformance.map((trainer, index) => (
+                <motion.div
+                  key={trainer.id}
+                  className="p-3 sm:p-4 bg-gray-50 rounded-lg border border-gray-200"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-sm sm:text-base font-semibold text-text-dark">{trainer.name}</h4>
+                    <span className="text-lg sm:text-xl font-bold text-primary-blue">{trainer.score}%</span>
+                  </div>
+                  <div className="flex items-center gap-4 text-xs sm:text-sm text-text-light">
+                    <span>Members: {trainer.members}</span>
+                    <span>Rating: {trainer.rating} ⭐</span>
+                  </div>
+                  <div className="mt-2 h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <motion.div
+                      className="h-full bg-gradient-primary rounded-full"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${trainer.score}%` }}
+                      transition={{ duration: 1, delay: index * 0.1 }}
+                      style={{
+                        background: 'linear-gradient(135deg, #305EFF, #8A4CFF)',
+                      }}
+                    />
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

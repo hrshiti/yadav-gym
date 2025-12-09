@@ -80,7 +80,7 @@ const Drawer = ({
             className={`
               fixed
               ${positionClasses[position]}
-              bg-background-card
+              bg-white
               shadow-2xl
               z-50
               ${className}
@@ -122,7 +122,7 @@ const Drawer = ({
             )}
 
             {/* Content */}
-            <div className="h-full overflow-y-auto">
+            <div className="h-full overflow-y-auto scrollbar-hide">
               {children}
             </div>
           </motion.div>

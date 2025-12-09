@@ -24,15 +24,37 @@ const AdminLayout = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const navItems = [
-    { path: '/admin/dashboard', icon: 'dashboard', label: 'Dashboard' },
-    { path: '/admin/members', icon: 'members', label: 'Members' },
-    { path: '/admin/members/add', icon: 'add-member', label: 'Add Member' },
-    { path: '/admin/trainers', icon: 'trainers', label: 'Trainers' },
-    { path: '/admin/workout-diet', icon: 'workout', label: 'Workout & Diet' },
-    { path: '/admin/attendance', icon: 'attendance', label: 'Attendance' },
-    { path: '/admin/reports', icon: 'reports', label: 'Reports' },
-    { path: '/admin/settings', icon: 'settings', label: 'Settings' },
+  const navSections = [
+    {
+      title: 'HOME',
+      items: [
+        { path: '/admin/dashboard', icon: 'dashboard', label: 'Dashboard' },
+        { path: '/admin/members/add', icon: 'add-member', label: 'Add Member' },
+        { path: '/admin/members', icon: 'members', label: 'Members List' },
+        { path: '/admin/trainers/add', icon: 'add-trainer', label: 'Add Trainer' },
+        { path: '/admin/trainers', icon: 'trainers', label: 'Trainers List' },
+        { path: '/admin/member-progress', icon: 'progress', label: 'Member Progress' },
+        { path: '/admin/attendance', icon: 'attendance', label: 'Attendance Report' },
+      ],
+    },
+    {
+      title: 'MANAGEMENT',
+      items: [
+        { path: '/admin/workout-plans', icon: 'workout', label: 'Workout Plans' },
+        { path: '/admin/diet-plans', icon: 'diet', label: 'Diet Plans' },
+        { path: '/admin/trainer-assignment', icon: 'assignment', label: 'Trainer Assignment' },
+        { path: '/admin/body-stats', icon: 'stats', label: 'Body Stats Update' },
+      ],
+    },
+    {
+      title: 'OTHERS',
+      items: [
+        { path: '/admin/settings', icon: 'settings', label: 'Settings' },
+        { path: '/admin/remove-member', icon: 'remove', label: 'Remove Member' },
+        { path: '/admin/remove-trainer', icon: 'remove', label: 'Remove Trainer' },
+        { path: '/logout', icon: 'logout', label: 'Logout', isLogout: true },
+      ],
+    },
   ];
 
   const isActive = (path) => location.pathname === path;
@@ -58,16 +80,22 @@ const AdminLayout = () => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
           </svg>
         );
+      case 'add-trainer':
+        return (
+          <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+          </svg>
+        );
       case 'trainers':
         return (
           <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
           </svg>
         );
-      case 'workout':
+      case 'progress':
         return (
           <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
           </svg>
         );
       case 'attendance':
@@ -76,10 +104,28 @@ const AdminLayout = () => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
           </svg>
         );
-      case 'reports':
+      case 'workout':
         return (
           <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        );
+      case 'diet':
+        return (
+          <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+          </svg>
+        );
+      case 'assignment':
+        return (
+          <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+          </svg>
+        );
+      case 'stats':
+        return (
+          <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
           </svg>
         );
       case 'settings':
@@ -89,13 +135,32 @@ const AdminLayout = () => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
         );
+      case 'remove':
+        return (
+          <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+        );
+      case 'logout':
+        return (
+          <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+        );
       default:
         return null;
     }
   };
 
-  const handleNavClick = (path) => {
-    navigate(path);
+  const handleNavClick = (path, isLogout = false) => {
+    if (isLogout) {
+      // Handle logout - clear local storage and redirect to login
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      navigate('/login');
+    } else {
+      navigate(path);
+    }
     if (isMobile) {
       setSidebarOpen(false);
     }
@@ -142,35 +207,48 @@ const AdminLayout = () => {
 
               {/* Navigation */}
               <nav className="flex-1 overflow-y-auto p-2 sm:p-4">
-                <ul className="space-y-1 sm:space-y-2">
-                  {navItems.map((item) => (
-                    <li key={item.path}>
-                      <motion.button
-                        onClick={() => handleNavClick(item.path)}
-                        className={`w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 rounded-lg transition-all ${
-                          isActive(item.path)
-                            ? 'bg-gradient-primary text-white shadow-md'
-                            : 'text-text-dark hover:bg-gray-100'
-                        }`}
-                        whileHover={!isMobile ? { x: 4 } : {}}
-                        whileTap={{ scale: 0.98 }}
-                      >
-                        <span className={isActive(item.path) ? 'text-white' : 'text-primary-blue'}>
-                          {getIcon(item.icon)}
-                        </span>
-                        <span className="font-medium text-xs sm:text-sm">{item.label}</span>
-                        {isActive(item.path) && (
-                          <motion.div
-                            layoutId="activeIndicator"
-                            className="ml-auto w-1.5 h-1.5 bg-white rounded-full"
-                            initial={false}
-                            transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                          />
-                        )}
-                      </motion.button>
-                    </li>
-                  ))}
-                </ul>
+                {navSections.map((section, sectionIndex) => (
+                  <div key={section.title} className={sectionIndex > 0 ? 'mt-4 sm:mt-6' : ''}>
+                    <h3 className="text-xs font-semibold text-text-light uppercase tracking-wider px-3 sm:px-4 mb-2 sm:mb-3">
+                      {section.title}
+                    </h3>
+                    <ul className="space-y-1 sm:space-y-2">
+                      {section.items.map((item) => (
+                        <li key={item.path}>
+                          <motion.button
+                            onClick={() => handleNavClick(item.path, item.isLogout)}
+                            className={`w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 rounded-lg transition-all ${
+                              isActive(item.path)
+                                ? 'bg-gradient-primary text-white shadow-md'
+                                : 'text-text-dark hover:bg-gray-100 bg-white'
+                            }`}
+                            style={isActive(item.path) ? {
+                              background: 'linear-gradient(135deg, #305EFF, #8A4CFF)',
+                              color: '#FFFFFF'
+                            } : {}}
+                            whileHover={!isMobile ? { x: 4 } : {}}
+                            whileTap={{ scale: 0.98 }}
+                          >
+                            <span className={isActive(item.path) ? 'text-white' : 'text-primary-blue'}>
+                              {getIcon(item.icon)}
+                            </span>
+                            <span className={`font-medium text-xs sm:text-sm ${isActive(item.path) ? 'text-white' : 'text-text-dark'}`}>
+                              {item.label}
+                            </span>
+                            {isActive(item.path) && (
+                              <motion.div
+                                layoutId="activeIndicator"
+                                className="ml-auto w-1.5 h-1.5 bg-white rounded-full"
+                                initial={false}
+                                transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                              />
+                            )}
+                          </motion.button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
               </nav>
             </div>
           </motion.aside>

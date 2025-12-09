@@ -280,7 +280,7 @@ const TrainerProgress = () => {
                 type="button"
                 onClick={() => setWorkoutDone(!workoutDone)}
                 className={`relative w-14 h-8 rounded-full flex items-center transition-colors ${
-                  workoutDone ? 'bg-gradient-primary' : 'bg-gray-300'
+                  workoutDone ? 'bg-gradient-to-r from-primary-blue to-primary-purple' : 'bg-gray-300'
                 }`}
                 whileTap={{ scale: 0.95 }}
               >
@@ -405,7 +405,7 @@ const TrainerProgress = () => {
                           onClick={() => toggleTask(task.id)}
                           className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center flex-shrink-0 transition-all ${
                             task.completed
-                              ? 'bg-gradient-primary border-primary-blue'
+                              ? 'bg-gradient-to-r from-primary-blue to-primary-purple border-primary-blue'
                               : 'border-gray-300 bg-white'
                           }`}
                           whileTap={{ scale: 0.9 }}
@@ -510,10 +510,10 @@ const TrainerProgress = () => {
           <motion.button
             type="submit"
             disabled={!selectedMember || isSubmitting}
-            className={`w-full py-4 rounded-xl font-heading font-semibold text-white transition-all ${
+            className={`w-full py-4 rounded-xl font-heading font-semibold transition-all ${
               selectedMember && !isSubmitting
-                ? 'bg-gradient-primary shadow-lg hover:shadow-xl hover:shadow-primary-blue/50'
-                : 'bg-gray-300 cursor-not-allowed'
+                ? 'bg-gradient-primary shadow-lg hover:shadow-xl hover:shadow-primary-blue/50 text-white'
+                : 'bg-gray-300 cursor-not-allowed text-gray-600'
             }`}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -523,7 +523,9 @@ const TrainerProgress = () => {
             {isSubmitting ? (
               <div className="flex items-center justify-center gap-2">
                 <motion.div
-                  className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
+                  className={`w-5 h-5 border-2 border-t-transparent rounded-full ${
+                    selectedMember && !isSubmitting ? 'border-white' : 'border-gray-600'
+                  }`}
                   animate={{ rotate: 360 }}
                   transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                 />

@@ -26,6 +26,7 @@ export const ROUTES = {
   TRAINER_WORKOUT_PLAN: '/trainer/workout-plan',
   TRAINER_DIET_PLAN: '/trainer/diet-plan',
   TRAINER_BODY_STATS: '/trainer/body-stats',
+  TRAINER_CHAT: '/trainer/chat',
   
   // Member
   MEMBER_DASHBOARD: '/member/dashboard',

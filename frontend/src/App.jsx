@@ -13,10 +13,14 @@ import TrainerDashboard from './pages/trainer/TrainerDashboard';
 import TrainerProgress from './pages/trainer/TrainerProgress';
 import TrainerMembers from './pages/trainer/TrainerMembers';
 import TrainerWorkoutPlan from './pages/trainer/TrainerWorkoutPlan';
+import TrainerBodyStats from './pages/trainer/TrainerBodyStats';
+import TrainerChat from './pages/trainer/TrainerChat';
 import AdminLayout from './layouts/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminMembers from './pages/admin/AdminMembers';
 import AdminTrainers from './pages/admin/AdminTrainers';
+import AdminMemberProgress from './pages/admin/AdminMemberProgress';
+import AdminAttendance from './pages/admin/AdminAttendance';
 
 // Create a client for React Query
 const queryClient = new QueryClient({
@@ -50,6 +54,8 @@ function App() {
             <Route path="trainers" element={<AdminTrainers />} />
             <Route path="trainers/add" element={<AdminTrainers />} />
             <Route path="trainers/edit/:id" element={<AdminTrainers />} />
+            <Route path="member-progress" element={<AdminMemberProgress />} />
+            <Route path="attendance" element={<AdminAttendance />} />
             <Route index element={<Navigate to="dashboard" replace />} />
           </Route>
           
@@ -59,6 +65,8 @@ function App() {
             <Route path="members" element={<TrainerMembers />} />
             <Route path="progress" element={<TrainerProgress />} />
             <Route path="workout-plan" element={<TrainerWorkoutPlan />} />
+            <Route path="body-stats" element={<TrainerBodyStats />} />
+            <Route path="chat" element={<TrainerChat />} />
             <Route index element={<Navigate to="dashboard" replace />} />
           </Route>
           

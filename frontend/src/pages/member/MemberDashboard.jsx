@@ -1,8 +1,14 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
+import Spline from '@splinetool/react-spline';
 
 const MemberDashboard = () => {
   const [selectedFilter, setSelectedFilter] = useState('All type');
+  const [splineError, setSplineError] = useState(false);
+  
+  // Replace this with your actual Spline scene URL
+  // Get it from: https://spline.design - Create a scene and export it
+  const SPLINE_SCENE_URL = null; // Set your Spline scene URL here when ready
   
   // Today's Goals data
   const [todayGoals, setTodayGoals] = useState([
@@ -212,8 +218,135 @@ const MemberDashboard = () => {
           </div>
         </div>
         
+        {/* Animated Character Doing Exercise - Fallback Animation */}
+        <div className="absolute bottom-0 right-0 h-32 sm:h-40 w-32 sm:w-40 opacity-20 pointer-events-none overflow-hidden">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 0.2, scale: 1 }}
+            transition={{ duration: 1 }}
+            className="w-full h-full flex items-center justify-center"
+          >
+            {/* Animated Character with Dumbbells */}
+            <motion.div
+              className="relative"
+              animate={{
+                y: [0, -10, 0],
+              }}
+              transition={{
+                duration: 1.5,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            >
+              {/* Character Body */}
+              <div className="relative">
+                {/* Head */}
+                <motion.div
+                  className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-primary mx-auto mb-1"
+                  animate={{
+                    scale: [1, 1.05, 1],
+                  }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                />
+                
+                {/* Body */}
+                <div className="w-6 h-12 sm:w-8 sm:h-16 bg-gradient-primary rounded-lg mx-auto relative">
+                  {/* Left Arm with Dumbbell */}
+                  <motion.div
+                    className="absolute -left-4 sm:-left-6 top-2 sm:top-3 origin-top"
+                    animate={{
+                      rotate: [0, -45, 0, 45, 0],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                  >
+                    <div className="w-3 h-8 sm:w-4 sm:h-10 bg-gradient-primary rounded-full">
+                      {/* Dumbbell */}
+                      <motion.div
+                        className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 sm:w-5 sm:h-5 bg-gradient-primary rounded-full"
+                        animate={{
+                          scale: [1, 1.2, 1],
+                        }}
+                        transition={{
+                          duration: 1,
+                          repeat: Infinity,
+                          ease: "easeInOut",
+                        }}
+                      />
+                    </div>
+                  </motion.div>
+                  
+                  {/* Right Arm with Dumbbell */}
+                  <motion.div
+                    className="absolute -right-4 sm:-right-6 top-2 sm:top-3 origin-top"
+                    animate={{
+                      rotate: [0, 45, 0, -45, 0],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                      delay: 0.5,
+                    }}
+                  >
+                    <div className="w-3 h-8 sm:w-4 sm:h-10 bg-gradient-primary rounded-full">
+                      {/* Dumbbell */}
+                      <motion.div
+                        className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 sm:w-5 sm:h-5 bg-gradient-primary rounded-full"
+                        animate={{
+                          scale: [1, 1.2, 1],
+                        }}
+                        transition={{
+                          duration: 1,
+                          repeat: Infinity,
+                          ease: "easeInOut",
+                          delay: 0.5,
+                        }}
+                      />
+                    </div>
+                  </motion.div>
+                </div>
+                
+                {/* Legs */}
+                <div className="flex gap-2 sm:gap-3 mt-1 sm:mt-2 justify-center">
+                  <motion.div
+                    className="w-2 h-6 sm:w-3 sm:h-8 bg-gradient-primary rounded-full"
+                    animate={{
+                      y: [0, 5, 0],
+                    }}
+                    transition={{
+                      duration: 1.5,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                  />
+                  <motion.div
+                    className="w-2 h-6 sm:w-3 sm:h-8 bg-gradient-primary rounded-full"
+                    animate={{
+                      y: [0, 5, 0],
+                    }}
+                    transition={{
+                      duration: 1.5,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                      delay: 0.3,
+                    }}
+                  />
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        </div>
+
         {/* Animated Dumbbell */}
-        <div className="absolute bottom-0 left-0 right-0 h-16 flex items-center justify-center opacity-10">
+        <div className="absolute bottom-0 left-0 h-16 flex items-center justify-center opacity-10 pointer-events-none">
           <motion.div
             className="flex items-center gap-6"
             initial={{ opacity: 0, y: 20 }}
