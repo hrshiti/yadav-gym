@@ -150,6 +150,14 @@ const MemberDashboard = () => {
       gradient: 'from-primary-purple to-primary-blue',
       icon: '📊',
     },
+    {
+      id: 4,
+      title: 'Assigned Trainer',
+      value: 'Rajesh',
+      unit: 'Kumar',
+      gradient: 'from-warning to-warning/80',
+      icon: '👨‍🏫',
+    },
   ];
 
   // Workout filters
@@ -167,6 +175,7 @@ const MemberDashboard = () => {
       typeColor: 'text-pink-500',
       typeBg: 'bg-pink-50',
       days: '3 Days',
+      category: 'All type', // Default category
       image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&h=400&fit=crop&q=80',
     },
     {
@@ -179,6 +188,7 @@ const MemberDashboard = () => {
       typeColor: 'text-primary-blue',
       typeBg: 'bg-primary-blue/10',
       days: '5 Days',
+      category: 'CrossFit',
       image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop&q=80',
     },
     {
@@ -191,9 +201,67 @@ const MemberDashboard = () => {
       typeColor: 'text-pink-500',
       typeBg: 'bg-pink-50',
       days: '7 Days',
+      category: 'Yoga',
       image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=400&h=400&fit=crop&q=80',
     },
+    {
+      id: 4,
+      title: 'Cycling',
+      instructor: 'Amit Singh',
+      date: 'Sunday, 22 Oct.',
+      duration: '60 mins',
+      type: 'Popular',
+      typeColor: 'text-pink-500',
+      typeBg: 'bg-pink-50',
+      days: '5 Days',
+      category: 'Cycling',
+      image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&h=400&fit=crop&q=80',
+    },
+    {
+      id: 5,
+      title: 'Swimming',
+      instructor: 'Vikram Mehta',
+      date: 'Monday, 23 Oct.',
+      duration: '45 mins',
+      type: 'Circular',
+      typeColor: 'text-primary-blue',
+      typeBg: 'bg-primary-blue/10',
+      days: '4 Days',
+      category: 'Swim',
+      image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop&q=80',
+    },
+    {
+      id: 6,
+      title: 'Yoga Flow',
+      instructor: 'Priya Sharma',
+      date: 'Tuesday, 24 Oct.',
+      duration: '50 mins',
+      type: 'Popular',
+      typeColor: 'text-pink-500',
+      typeBg: 'bg-pink-50',
+      days: '6 Days',
+      category: 'Yoga',
+      image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=400&h=400&fit=crop&q=80',
+    },
+    {
+      id: 7,
+      title: 'CrossFit Advanced',
+      instructor: 'Rajesh Kumar',
+      date: 'Wednesday, 25 Oct.',
+      duration: '60 mins',
+      type: 'Circular',
+      typeColor: 'text-primary-blue',
+      typeBg: 'bg-primary-blue/10',
+      days: '5 Days',
+      category: 'CrossFit',
+      image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop&q=80',
+    },
   ];
+
+  // Filter workout cards based on selected filter
+  const filteredWorkoutCards = selectedFilter === 'All type'
+    ? workoutCards
+    : workoutCards.filter(card => card.category === selectedFilter);
 
   return (
     <div className="min-h-screen bg-background-main pb-24">
@@ -416,34 +484,50 @@ const MemberDashboard = () => {
       <div className="px-4 mt-6">
         <h3 className="text-xl font-heading font-bold text-text-dark mb-4">Activity</h3>
         
-        <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4">
+        <div className="grid grid-cols-2 gap-3">
           {activityCards.map((card, index) => (
             <motion.div
               key={card.id}
-              className="flex-shrink-0 w-36 bg-white rounded-2xl p-5 shadow-md border border-gray-100"
+              className="bg-white rounded-xl p-3 shadow-md border border-gray-100"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              whileHover={{ scale: 1.05, y: -5 }}
+              whileHover={{ scale: 1.02, y: -2 }}
             >
-              <p className="text-xs text-text-light font-body mb-4 font-medium">{card.title}</p>
+              <p className="text-[10px] text-text-light font-body mb-2 font-medium">{card.title}</p>
               <div 
-                className="w-20 h-20 rounded-full flex flex-col items-center justify-center mb-3 mx-auto shadow-lg"
+                className="w-14 h-14 rounded-full flex flex-col items-center justify-center mb-2 mx-auto shadow-lg"
                 style={{
                   background: card.id === 1 
                     ? 'linear-gradient(135deg, #305EFF, #8A4CFF)'
                     : card.id === 2
                     ? 'linear-gradient(135deg, #22C55E, #16A34A)'
-                    : 'linear-gradient(135deg, #8A4CFF, #305EFF)'
+                    : card.id === 3
+                    ? 'linear-gradient(135deg, #8A4CFF, #305EFF)'
+                    : 'linear-gradient(135deg, #F59E0B, #D97706)'
                 }}
               >
-                <span className="font-mono font-bold text-2xl leading-none" style={{ color: '#FFFFFF' }}>
-                  {card.value}
-                </span>
-                <span className="font-mono text-xs mt-0.5" style={{ color: '#FFFFFF', opacity: 0.95 }}>
-                  {card.unit}
-                </span>
+                {card.id === 4 ? (
+                  <span className="text-lg" style={{ color: '#FFFFFF' }}>
+                    {card.icon}
+                  </span>
+                ) : (
+                  <>
+                    <span className="font-mono font-bold text-base leading-none" style={{ color: '#FFFFFF' }}>
+                      {card.value}
+                    </span>
+                    <span className="font-mono text-[9px] mt-0.5" style={{ color: '#FFFFFF', opacity: 0.95 }}>
+                      {card.unit}
+                    </span>
+                  </>
+                )}
               </div>
+              {card.id === 4 && (
+                <div className="text-center">
+                  <p className="text-xs font-bold text-text-dark">{card.value}</p>
+                  <p className="text-[10px] text-text-light">{card.unit}</p>
+                </div>
+              )}
             </motion.div>
           ))}
           
@@ -538,7 +622,12 @@ const MemberDashboard = () => {
 
         {/* Workout Cards */}
         <div className="space-y-4">
-          {workoutCards.map((workout, index) => (
+          {filteredWorkoutCards.length === 0 ? (
+            <div className="bg-white rounded-2xl p-8 text-center shadow-md border border-gray-100">
+              <p className="text-text-light">No workouts found for this category</p>
+            </div>
+          ) : (
+            filteredWorkoutCards.map((workout, index) => (
             <motion.div
               key={workout.id}
               className="bg-white rounded-2xl p-5 shadow-md border border-gray-100 flex gap-4 overflow-hidden"
@@ -607,7 +696,8 @@ const MemberDashboard = () => {
                 />
               </div>
             </motion.div>
-          ))}
+            ))
+          )}
         </div>
       </div>
 

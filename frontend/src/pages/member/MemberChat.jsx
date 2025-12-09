@@ -127,16 +127,21 @@ const MemberChat = () => {
             <div
               className={`max-w-[80%] sm:max-w-[70%] rounded-2xl px-3 sm:px-4 py-2 sm:py-2.5 ${
                 message.sender === 'member'
-                  ? 'bg-white text-black rounded-br-sm shadow-sm border border-gray-100'
-                  : 'bg-white text-black rounded-bl-sm shadow-sm border border-gray-100'
+                  ? 'bg-gradient-to-r from-primary-blue to-primary-purple text-white rounded-br-sm shadow-md'
+                  : 'bg-white text-text-dark rounded-bl-sm shadow-sm border border-gray-100'
               }`}
+              style={message.sender === 'member' ? {
+                background: 'linear-gradient(135deg, #305EFF, #8A4CFF)'
+              } : {}}
             >
-              <p className="text-sm sm:text-base font-body leading-relaxed break-words text-black">
+              <p className={`text-sm sm:text-base font-body leading-relaxed break-words ${
+                message.sender === 'member' ? 'text-white' : 'text-text-dark'
+              }`}>
                 {message.text}
               </p>
               <p
                 className={`text-xs mt-1 ${
-                  message.sender === 'member' ? 'text-text-light' : 'text-text-light'
+                  message.sender === 'member' ? 'text-white/80' : 'text-text-light'
                 }`}
               >
                 {message.time}
@@ -157,17 +162,17 @@ const MemberChat = () => {
               <div className="bg-white text-text-dark rounded-2xl rounded-bl-sm shadow-sm border border-gray-100 px-4 py-3">
                 <div className="flex items-center gap-1">
                   <motion.div
-                    className="w-2 h-2 bg-text-light rounded-full"
+                    className="w-2 h-2 bg-primary-blue rounded-full"
                     animate={{ y: [0, -8, 0] }}
                     transition={{ duration: 0.6, repeat: Infinity, delay: 0 }}
                   />
                   <motion.div
-                    className="w-2 h-2 bg-text-light rounded-full"
+                    className="w-2 h-2 bg-primary-blue rounded-full"
                     animate={{ y: [0, -8, 0] }}
                     transition={{ duration: 0.6, repeat: Infinity, delay: 0.2 }}
                   />
                   <motion.div
-                    className="w-2 h-2 bg-text-light rounded-full"
+                    className="w-2 h-2 bg-primary-blue rounded-full"
                     animate={{ y: [0, -8, 0] }}
                     transition={{ duration: 0.6, repeat: Infinity, delay: 0.4 }}
                   />

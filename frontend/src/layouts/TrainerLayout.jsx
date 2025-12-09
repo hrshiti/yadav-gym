@@ -2,6 +2,7 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import Drawer from '../components/Drawer';
+import useAuthStore from '../store/authStore';
 
 const TrainerLayout = () => {
   const navigate = useNavigate();
@@ -155,11 +156,13 @@ const TrainerLayout = () => {
     }
   };
 
+  const logout = useAuthStore((state) => state.logout);
+
   const handleMenuClick = (item) => {
     if (item.isLogout) {
-      // Handle logout
-      console.log('Logout clicked');
-      // Add your logout logic here
+      // Handle logout - clear auth store and redirect to login
+      logout();
+      navigate('/trainer/login');
     } else {
       navigate(item.path);
     }
@@ -272,15 +275,25 @@ const TrainerLayout = () => {
                   console.log('Navigating to:', item.path);
                   navigate(item.path, { replace: false });
                 }}
-                className={`relative flex flex-col items-center justify-center gap-1 px-3 py-1 rounded-lg transition-colors ${
-                  isActive(item.path)
-                    ? 'text-primary-blue'
-                    : 'text-gray-500'
-                }`}
+                className="relative flex flex-col items-center justify-center gap-1 px-3 py-1.5 rounded-lg transition-all"
                 whileTap={{ scale: 0.9 }}
+                whileHover={!isActive(item.path) ? { scale: 1.05 } : {}}
               >
-                {getIcon(item.icon)}
-                <span className="text-xs font-medium">{item.label}</span>
+                <span 
+                  style={{ 
+                    color: isActive(item.path) ? '#305EFF' : '#6B7280'
+                  }}
+                >
+                  {getIcon(item.icon)}
+                </span>
+                <span 
+                  className="text-xs font-medium"
+                  style={{ 
+                    color: isActive(item.path) ? '#305EFF' : '#6B7280'
+                  }}
+                >
+                  {item.label}
+                </span>
               </motion.button>
             );
           })}

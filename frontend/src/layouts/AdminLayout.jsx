@@ -1,6 +1,7 @@
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
+import useAuthStore from '../store/authStore';
 
 const AdminLayout = () => {
   const navigate = useNavigate();
@@ -152,12 +153,13 @@ const AdminLayout = () => {
     }
   };
 
+  const logout = useAuthStore((state) => state.logout);
+
   const handleNavClick = (path, isLogout = false) => {
     if (isLogout) {
-      // Handle logout - clear local storage and redirect to login
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      navigate('/login');
+      // Handle logout - clear auth store and redirect to login
+      logout();
+      navigate('/admin/login');
     } else {
       navigate(path);
     }
@@ -206,7 +208,7 @@ const AdminLayout = () => {
               </div>
 
               {/* Navigation */}
-              <nav className="flex-1 overflow-y-auto p-2 sm:p-4">
+              <nav className="flex-1 overflow-y-auto scrollbar-hide p-2 sm:p-4">
                 {navSections.map((section, sectionIndex) => (
                   <div key={section.title} className={sectionIndex > 0 ? 'mt-4 sm:mt-6' : ''}>
                     <h3 className="text-xs font-semibold text-text-light uppercase tracking-wider px-3 sm:px-4 mb-2 sm:mb-3">

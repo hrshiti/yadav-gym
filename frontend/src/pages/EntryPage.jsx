@@ -88,7 +88,7 @@ function EntryPage() {
             <img
               src={logoImage}
               alt="Yadav Fitness Club"
-              className="w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-72 lg:h-72 xl:w-80 xl:h-80 object-contain flex-shrink-0 mb-4"
+              className="w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-96 lg:h-96 xl:w-[28rem] xl:h-[28rem] object-contain flex-shrink-0 mb-4"
               style={{ 
                 display: 'block', 
                 opacity: 1,
@@ -107,7 +107,7 @@ function EntryPage() {
               }}
             />
           ) : (
-            <div className="w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-72 lg:h-72 xl:w-80 xl:h-80 bg-red-500 flex items-center justify-center text-white text-xs mb-4">
+            <div className="w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-96 lg:h-96 xl:w-[28rem] xl:h-[28rem] bg-red-500 flex items-center justify-center text-white text-xs mb-4">
               No Logo
             </div>
           )}
@@ -128,7 +128,7 @@ function EntryPage() {
         >
           {/* Member Portal Button */}
           <motion.button
-            onClick={() => handlePortalClick(ROUTES.MEMBER_DASHBOARD)}
+            onClick={() => handlePortalClick(ROUTES.MEMBER_LOGIN)}
             className="w-full max-w-md bg-gradient-to-r from-[#305EFF] to-[#8A4CFF] text-white font-heading font-semibold text-sm sm:text-base md:text-lg py-3 sm:py-4 md:py-5 rounded-xl shadow-lg hover:shadow-xl hover:shadow-[#305EFF]/50 transition-all duration-300 flex items-center justify-center gap-2 sm:gap-3 group relative overflow-hidden"
             whileHover={{ scale: 1.02, y: -2 }}
             whileTap={{ scale: 0.98 }}
@@ -158,7 +158,7 @@ function EntryPage() {
 
           {/* Trainer Portal Button */}
           <motion.button
-            onClick={() => handlePortalClick(ROUTES.TRAINER_DASHBOARD)}
+            onClick={() => handlePortalClick(ROUTES.TRAINER_LOGIN)}
             className="w-full max-w-md bg-gradient-to-r from-[#305EFF] to-[#8A4CFF] text-white font-heading font-semibold text-sm sm:text-base md:text-lg py-3 sm:py-4 md:py-5 rounded-xl shadow-lg hover:shadow-xl hover:shadow-[#305EFF]/50 transition-all duration-300 flex items-center justify-center gap-2 sm:gap-3 group relative overflow-hidden"
             whileHover={{ scale: 1.02, y: -2 }}
             whileTap={{ scale: 0.98 }}
@@ -188,7 +188,7 @@ function EntryPage() {
 
           {/* Admin Portal Button */}
           <motion.button
-            onClick={() => handlePortalClick(ROUTES.ADMIN_DASHBOARD)}
+            onClick={() => handlePortalClick(ROUTES.ADMIN_LOGIN)}
             className="w-full max-w-md bg-gradient-to-r from-[#305EFF] to-[#8A4CFF] text-white font-heading font-semibold text-sm sm:text-base md:text-lg py-3 sm:py-4 md:py-5 rounded-xl shadow-lg hover:shadow-xl hover:shadow-[#305EFF]/50 transition-all duration-300 flex items-center justify-center gap-2 sm:gap-3 group relative overflow-hidden"
             whileHover={{ scale: 1.02, y: -2 }}
             whileTap={{ scale: 0.98 }}
