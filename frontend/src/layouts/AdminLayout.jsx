@@ -12,8 +12,10 @@ const AdminLayout = () => {
   // Detect mobile view
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-      if (window.innerWidth >= 768) {
+      const isMobileView = window.innerWidth < 768;
+      setIsMobile(isMobileView);
+      // Always open on desktop/webview, closed by default on mobile
+      if (!isMobileView) {
         setSidebarOpen(true);
       } else {
         setSidebarOpen(false);
@@ -183,7 +185,7 @@ const AdminLayout = () => {
 
       {/* Left Sidebar */}
       <AnimatePresence>
-        {sidebarOpen && (
+        {(sidebarOpen || !isMobile) && (
           <motion.aside
             initial={{ x: isMobile ? -280 : 0, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
@@ -197,14 +199,16 @@ const AdminLayout = () => {
               {/* Logo/Header */}
               <div className="p-3 sm:p-4 border-b border-gray-200 flex items-center justify-between">
                 <h2 className="text-lg sm:text-xl font-heading font-bold text-text-dark">Admin Panel</h2>
-                <button
-                  onClick={() => setSidebarOpen(false)}
-                  className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                  <svg className="w-5 h-5 text-text-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
+                {isMobile && (
+                  <button
+                    onClick={() => setSidebarOpen(false)}
+                    className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  >
+                    <svg className="w-5 h-5 text-text-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                )}
               </div>
 
               {/* Navigation */}
@@ -258,19 +262,23 @@ const AdminLayout = () => {
       </AnimatePresence>
 
       {/* Main Content */}
-      <div className={`flex-1 transition-all duration-300 w-full ${!isMobile && sidebarOpen ? 'ml-[280px]' : 'ml-0'}`}>
+      <div className={`flex-1 transition-all duration-300 w-full ${!isMobile ? 'ml-[280px]' : 'ml-0'}`}>
         {/* Top Bar */}
         <div className="bg-white border-b border-gray-200 px-3 sm:px-4 md:px-6 py-3 sm:py-4 sticky top-0 z-30 flex items-center justify-between">
           <div className="flex items-center gap-2 sm:gap-4">
-            <button
-              onClick={() => setSidebarOpen(true)}
-              className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <svg className="w-5 h-5 sm:w-6 sm:h-6 text-text-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-            <h1 className="text-base sm:text-lg font-heading font-bold text-text-dark">Dashboard</h1>
+            {isMobile && (
+              <button
+                onClick={() => setSidebarOpen(true)}
+                className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <svg className="w-5 h-5 sm:w-6 sm:h-6 text-text-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
+            )}
+            {isMobile && (
+              <h1 className="text-base sm:text-lg font-heading font-bold text-text-dark">Dashboard</h1>
+            )}
           </div>
           
           {/* User Profile */}
@@ -286,8 +294,10 @@ const AdminLayout = () => {
         </div>
 
         {/* Page Content */}
-        <div className="p-3 sm:p-4 md:p-6 overflow-x-hidden">
-          <Outlet />
+        <div className="p-3 sm:p-4 md:p-6 lg:p-8 overflow-x-hidden">
+          <div className="max-w-[1400px] mx-auto w-full">
+            <Outlet />
+          </div>
         </div>
       </div>
     </div>
