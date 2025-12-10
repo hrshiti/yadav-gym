@@ -1,10 +1,83 @@
-import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
 import Spline from '@splinetool/react-spline';
+import Lenis from '@studio-freight/lenis';
+
+// Motivational fitness quotes
+const motivationalQuotes = [
+  "Have a nice day!",
+  "Push yourself, because no one else is going to do it for you!",
+  "Your body can do it. It's your mind you need to convince!",
+  "The only bad workout is the one that didn't happen!",
+  "Strength doesn't come from what you can do. It comes from overcoming the things you once thought you couldn't!",
+  "Take care of your body. It's the only place you have to live!",
+  "Success starts with self-discipline!",
+  "Don't stop when you're tired. Stop when you're done!",
+  "The pain you feel today will be the strength you feel tomorrow!",
+  "Train like a beast, look like a beauty!",
+  "Your limitation—it's only your imagination!",
+  "Wake up with determination. Go to bed with satisfaction!",
+  "Sweat is just fat crying!",
+  "The body achieves what the mind believes!",
+  "Fitness is not about being better than someone else. It's about being better than you used to be!",
+  "You are stronger than you think!",
+  "Every champion was once a beginner who refused to give up!",
+  "Motivation gets you started. Habit keeps you going!",
+  "The only workout you'll regret is the one you didn't do!",
+  "Be stronger than your excuses!",
+  "Your health is an investment, not an expense!",
+  "Progress, not perfection!",
+  "The best project you'll ever work on is you!",
+  "Believe in yourself and all that you are!",
+  "Today's workout is tomorrow's strength!",
+];
 
 const MemberDashboard = () => {
   const [selectedFilter, setSelectedFilter] = useState('All type');
   const [splineError, setSplineError] = useState(false);
+  const [currentQuote, setCurrentQuote] = useState(0);
+  const lenisRef = useRef(null);
+  
+  // Initialize Lenis for smooth scrolling
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: 'vertical',
+      gestureOrientation: 'vertical',
+      smoothWheel: true,
+      wheelMultiplier: 1,
+      smoothTouch: false,
+      touchMultiplier: 2,
+      infinite: false,
+    });
+
+    lenisRef.current = lenis;
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+
+    requestAnimationFrame(raf);
+
+    return () => {
+      lenis.destroy();
+    };
+  }, []);
+  
+  // Rotate quotes every 4 seconds
+  useEffect(() => {
+    // Set initial random quote
+    const randomIndex = Math.floor(Math.random() * motivationalQuotes.length);
+    setCurrentQuote(randomIndex);
+    
+    const interval = setInterval(() => {
+      setCurrentQuote((prev) => (prev + 1) % motivationalQuotes.length);
+    }, 4000); // Change quote every 4 seconds
+    
+    return () => clearInterval(interval);
+  }, []);
   
   // Replace this with your actual Spline scene URL
   // Get it from: https://spline.design - Create a scene and export it
@@ -63,7 +136,11 @@ const MemberDashboard = () => {
     setTodayGoals(goals =>
       goals.map(goal =>
         goal.id === id
-          ? { ...goal, completed: !goal.completed, progress: goal.completed ? goal.progress : 100 }
+          ? { 
+              ...goal, 
+              completed: !goal.completed, 
+              progress: goal.completed ? goal.progress : 100 
+            }
           : goal
       )
     );
@@ -269,11 +346,22 @@ const MemberDashboard = () => {
       <div className="bg-white px-4 pt-4 pb-6 relative overflow-hidden">
         <div className="flex items-center justify-between mb-4 relative z-10">
           {/* Date */}
-          <div>
+          <div className="flex-1 min-w-0 pr-2">
             <p className="text-sm text-text-light font-body">{getCurrentDate()}</p>
-            <h2 className="text-xl font-heading font-bold text-text-dark mt-1">
-              Have a nice day!
-            </h2>
+            <div className="min-h-[32px] sm:min-h-[40px] flex items-start sm:items-center mt-1">
+              <AnimatePresence mode="wait">
+                <motion.h2 
+                  key={currentQuote}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.5 }}
+                  className="text-sm sm:text-xl font-heading font-bold text-text-dark leading-tight break-words"
+                >
+                  {motivationalQuotes[currentQuote]}
+                </motion.h2>
+              </AnimatePresence>
+            </div>
           </div>
 
           {/* Profile Picture */}
@@ -489,13 +577,39 @@ const MemberDashboard = () => {
             <motion.div
               key={card.id}
               className="bg-white rounded-xl p-3 shadow-md border border-gray-100"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              whileHover={{ scale: 1.02, y: -2 }}
+              initial={{ opacity: 0, y: 30, scale: 0.85, rotateX: -15 }}
+              animate={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
+              transition={{ 
+                delay: index * 0.15,
+                duration: 0.6,
+                ease: [0.25, 0.1, 0.25, 1],
+                type: "spring",
+                stiffness: 150,
+                damping: 18
+              }}
+              whileHover={{ 
+                scale: 1.05, 
+                y: -4,
+                transition: { 
+                  duration: 0.3,
+                  ease: [0.25, 0.1, 0.25, 1]
+                } 
+              }}
+              whileTap={{ scale: 0.95 }}
             >
-              <p className="text-[10px] text-text-light font-body mb-2 font-medium">{card.title}</p>
-              <div 
+              <motion.p 
+                className="text-[10px] text-text-light font-body mb-2 font-medium"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ 
+                  delay: index * 0.15 + 0.2,
+                  duration: 0.4,
+                  ease: [0.25, 0.1, 0.25, 1]
+                }}
+              >
+                {card.title}
+              </motion.p>
+              <motion.div 
                 className="w-14 h-14 rounded-full flex flex-col items-center justify-center mb-2 mx-auto shadow-lg"
                 style={{
                   background: card.id === 1 
@@ -506,27 +620,126 @@ const MemberDashboard = () => {
                     ? 'linear-gradient(135deg, #8A4CFF, #305EFF)'
                     : 'linear-gradient(135deg, #F59E0B, #D97706)'
                 }}
+                initial={{ 
+                  opacity: 0, 
+                  scale: 0,
+                  rotate: -180
+                }}
+                animate={{ 
+                  opacity: 1, 
+                  scale: 1,
+                  rotate: 0
+                }}
+                transition={{ 
+                  delay: index * 0.15 + 0.3,
+                  duration: 0.7,
+                  type: "spring",
+                  stiffness: 200,
+                  damping: 12,
+                  mass: 0.9,
+                  ease: [0.25, 0.1, 0.25, 1]
+                }}
+                whileHover={{ 
+                  scale: 1.15,
+                  rotate: [0, -5, 5, -5, 0],
+                  transition: { 
+                    duration: 0.5,
+                    type: "spring",
+                    stiffness: 400
+                  }
+                }}
+                whileTap={{ 
+                  scale: 0.9,
+                  transition: { duration: 0.1 }
+                }}
               >
                 {card.id === 4 ? (
-                  <span className="text-lg" style={{ color: '#FFFFFF' }}>
+                  <motion.span 
+                    className="text-lg" 
+                    style={{ color: '#FFFFFF' }}
+                    initial={{ opacity: 0, scale: 0, rotate: -180 }}
+                    animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                    transition={{ 
+                      delay: index * 0.15 + 0.5,
+                      duration: 0.5,
+                      type: "spring",
+                      stiffness: 200,
+                      damping: 15,
+                      ease: [0.25, 0.1, 0.25, 1]
+                    }}
+                  >
                     {card.icon}
-                  </span>
+                  </motion.span>
                 ) : (
                   <>
-                    <span className="font-mono font-bold text-base leading-none" style={{ color: '#FFFFFF' }}>
+                    <motion.span 
+                      className="font-mono font-bold text-base leading-none" 
+                      style={{ color: '#FFFFFF' }}
+                      initial={{ opacity: 0, scale: 0.5, y: 10 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      transition={{ 
+                        delay: index * 0.15 + 0.45,
+                        duration: 0.5,
+                        type: "spring",
+                        stiffness: 200,
+                        damping: 15,
+                        ease: [0.25, 0.1, 0.25, 1]
+                      }}
+                    >
                       {card.value}
-                    </span>
-                    <span className="font-mono text-[9px] mt-0.5" style={{ color: '#FFFFFF', opacity: 0.95 }}>
+                    </motion.span>
+                    <motion.span 
+                      className="font-mono text-[9px] mt-0.5" 
+                      style={{ color: '#FFFFFF', opacity: 0.95 }}
+                      initial={{ opacity: 0, scale: 0.5, y: 5 }}
+                      animate={{ opacity: 0.95, scale: 1, y: 0 }}
+                      transition={{ 
+                        delay: index * 0.15 + 0.55,
+                        duration: 0.4,
+                        ease: [0.25, 0.1, 0.25, 1]
+                      }}
+                    >
                       {card.unit}
-                    </span>
+                    </motion.span>
                   </>
                 )}
-              </div>
+              </motion.div>
               {card.id === 4 && (
-                <div className="text-center">
-                  <p className="text-xs font-bold text-text-dark">{card.value}</p>
-                  <p className="text-[10px] text-text-light">{card.unit}</p>
-                </div>
+                <motion.div 
+                  className="text-center"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ 
+                    delay: index * 0.15 + 0.6,
+                    duration: 0.4,
+                    ease: [0.25, 0.1, 0.25, 1]
+                  }}
+                >
+                  <motion.p 
+                    className="text-xs font-bold text-text-dark"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ 
+                      delay: index * 0.15 + 0.65,
+                      duration: 0.3,
+                      ease: [0.25, 0.1, 0.25, 1]
+                    }}
+                  >
+                    {card.value}
+                  </motion.p>
+                  <motion.p 
+                    className="text-[10px] text-text-light"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ 
+                      delay: index * 0.15 + 0.7,
+                      duration: 0.3,
+                      ease: [0.25, 0.1, 0.25, 1]
+                    }}
+                  >
+                    {card.unit}
+                  </motion.p>
+                </motion.div>
               )}
             </motion.div>
           ))}
@@ -603,89 +816,234 @@ const MemberDashboard = () => {
         <h3 className="text-xl font-heading font-bold text-text-dark mb-4">Workouts</h3>
         
         {/* Filter Buttons */}
-        <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide mb-4">
+        <div className="relative flex gap-2 overflow-x-auto pb-4 scrollbar-hide mb-4">
           {workoutFilters.map((filter) => (
             <motion.button
               key={filter}
-              onClick={() => setSelectedFilter(filter)}
-              className={`px-4 py-2 rounded-full font-medium text-sm whitespace-nowrap transition-all ${
+              onClick={() => {
+                setSelectedFilter(filter);
+                // Smooth scroll to workout cards section
+                setTimeout(() => {
+                  if (lenisRef.current) {
+                    const workoutSection = document.querySelector('[data-workout-section]');
+                    if (workoutSection) {
+                      lenisRef.current.scrollTo(workoutSection, {
+                        offset: -20,
+                        duration: 1.2,
+                        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                      });
+                    }
+                  }
+                }, 100);
+              }}
+              className={`relative px-4 py-2 rounded-full font-medium text-sm whitespace-nowrap transition-colors ${
                 selectedFilter === filter
-                  ? 'bg-text-dark text-black'
+                  ? 'bg-gray-100 text-primary-blue'
                   : 'bg-gray-100 text-text-light hover:bg-gray-200'
               }`}
               whileTap={{ scale: 0.95 }}
             >
               {filter}
+              {selectedFilter === filter && (
+                <motion.div
+                  layoutId="activeFilterIndicator"
+                  className="absolute bottom-0 left-0 right-0 h-1 rounded-full"
+                  style={{
+                    background: 'linear-gradient(135deg, #305EFF, #8A4CFF)'
+                  }}
+                  initial={false}
+                  transition={{
+                    type: "spring",
+                    stiffness: 500,
+                    damping: 30
+                  }}
+                />
+              )}
             </motion.button>
           ))}
         </div>
 
         {/* Workout Cards */}
-        <div className="space-y-4">
+        <div data-workout-section>
+        <AnimatePresence mode="wait">
           {filteredWorkoutCards.length === 0 ? (
-            <div className="bg-white rounded-2xl p-8 text-center shadow-md border border-gray-100">
-              <p className="text-text-light">No workouts found for this category</p>
-            </div>
-          ) : (
-            filteredWorkoutCards.map((workout, index) => (
             <motion.div
-              key={workout.id}
-              className="bg-white rounded-2xl p-5 shadow-md border border-gray-100 flex gap-4 overflow-hidden"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.1 }}
-              whileHover={{ scale: 1.02, shadow: 'lg' }}
+              key="empty"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.3 }}
+              className="bg-white rounded-2xl p-8 text-center shadow-md border border-gray-100"
             >
+              <p className="text-text-light">No workouts found for this category</p>
+            </motion.div>
+          ) : (
+            <motion.div
+              key={selectedFilter}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="space-y-4"
+            >
+              {filteredWorkoutCards.map((workout, index) => (
+                <motion.div
+                  key={workout.id}
+                  className="bg-white rounded-2xl p-5 shadow-md border border-gray-100 flex gap-4 overflow-hidden"
+                  initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                  transition={{ 
+                    delay: index * 0.08,
+                    duration: 0.4,
+                    ease: [0.25, 0.1, 0.25, 1]
+                  }}
+                  whileHover={{ 
+                    scale: 1.02, 
+                    y: -2,
+                    transition: { duration: 0.2 }
+                  }}
+                >
               {/* Left Content */}
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="text-xs font-semibold text-text-dark bg-gray-100 px-2 py-1 rounded-md">
+                <motion.div 
+                  className="flex items-center gap-2 mb-3"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ 
+                    delay: index * 0.08 + 0.1,
+                    duration: 0.5,
+                    ease: [0.25, 0.1, 0.25, 1]
+                  }}
+                >
+                  <motion.span 
+                    className="text-xs font-semibold text-text-dark bg-gray-100 px-2 py-1 rounded-md"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ 
+                      delay: index * 0.08 + 0.15,
+                      duration: 0.4,
+                      ease: [0.25, 0.1, 0.25, 1]
+                    }}
+                  >
                     {workout.days}
-                  </span>
+                  </motion.span>
                   {workout.type === 'Popular' && (
-                    <span className={`${workout.typeBg} ${workout.typeColor} px-2 py-1 rounded-md text-xs font-semibold flex items-center gap-1`}>
+                    <motion.span 
+                      className={`${workout.typeBg} ${workout.typeColor} px-2 py-1 rounded-md text-xs font-semibold flex items-center gap-1`}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ 
+                        delay: index * 0.08 + 0.2,
+                        duration: 0.4,
+                        ease: [0.25, 0.1, 0.25, 1]
+                      }}
+                    >
                       <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                       </svg>
                       {workout.type}
-                    </span>
+                    </motion.span>
                   )}
                   {workout.type === 'Circular' && (
-                    <span className={`${workout.typeBg} ${workout.typeColor} px-2 py-1 rounded-md text-xs font-semibold flex items-center gap-1`}>
+                    <motion.span 
+                      className={`${workout.typeBg} ${workout.typeColor} px-2 py-1 rounded-md text-xs font-semibold flex items-center gap-1`}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ 
+                        delay: index * 0.08 + 0.2,
+                        duration: 0.4,
+                        ease: [0.25, 0.1, 0.25, 1]
+                      }}
+                    >
                       <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
                       </svg>
                       {workout.type}
-                    </span>
+                    </motion.span>
                   )}
-                </div>
+                </motion.div>
                 
-                <h4 className="text-xl font-heading font-bold text-text-dark mb-2">
+                <motion.h4 
+                  className="text-xl font-heading font-bold text-text-dark mb-2"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ 
+                    delay: index * 0.08 + 0.25,
+                    duration: 0.5,
+                    ease: [0.25, 0.1, 0.25, 1]
+                  }}
+                >
                   {workout.title}
-                </h4>
+                </motion.h4>
                 
-                <p className="text-sm text-text-light font-body mb-4">
+                <motion.p 
+                  className="text-sm text-text-light font-body mb-4"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ 
+                    delay: index * 0.08 + 0.3,
+                    duration: 0.5,
+                    ease: [0.25, 0.1, 0.25, 1]
+                  }}
+                >
                   {workout.instructor}
-                </p>
+                </motion.p>
                 
-                <div className="flex flex-col gap-2 text-xs text-text-light">
-                  <div className="flex items-center gap-2">
+                <motion.div 
+                  className="flex flex-col gap-2 text-xs text-text-light"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ 
+                    delay: index * 0.08 + 0.35,
+                    duration: 0.5,
+                    ease: [0.25, 0.1, 0.25, 1]
+                  }}
+                >
+                  <motion.div 
+                    className="flex items-center gap-2"
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ 
+                      delay: index * 0.08 + 0.4,
+                      duration: 0.4,
+                      ease: [0.25, 0.1, 0.25, 1]
+                    }}
+                  >
                     <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                     <span className="font-medium">{workout.date}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
+                  </motion.div>
+                  <motion.div 
+                    className="flex items-center gap-2"
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ 
+                      delay: index * 0.08 + 0.45,
+                      duration: 0.4,
+                      ease: [0.25, 0.1, 0.25, 1]
+                    }}
+                  >
                     <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     <span className="font-medium">{workout.duration}</span>
-                  </div>
-                </div>
+                  </motion.div>
+                </motion.div>
               </div>
 
               {/* Right Image */}
-              <div className="w-28 h-28 rounded-xl overflow-hidden flex-shrink-0 shadow-md">
+              <motion.div 
+                className="w-28 h-28 rounded-xl overflow-hidden flex-shrink-0 shadow-md"
+                initial={{ opacity: 0, scale: 0.8, x: 20 }}
+                animate={{ opacity: 1, scale: 1, x: 0 }}
+                transition={{ 
+                  delay: index * 0.08 + 0.5,
+                  duration: 0.6,
+                  ease: [0.25, 0.1, 0.25, 1]
+                }}
+              >
                 <img
                   src={workout.image}
                   alt={workout.title}
@@ -694,10 +1052,12 @@ const MemberDashboard = () => {
                     e.target.src = 'https://via.placeholder.com/200x200?text=Workout';
                   }}
                 />
-              </div>
+              </motion.div>
+                </motion.div>
+              ))}
             </motion.div>
-            ))
           )}
+        </AnimatePresence>
         </div>
       </div>
 
@@ -710,10 +1070,30 @@ const MemberDashboard = () => {
             <motion.div
               key={goal.id}
               className="bg-white rounded-2xl p-3 shadow-sm border border-gray-100"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.1 }}
-              whileHover={{ scale: 1.02, y: -2 }}
+              initial={{ 
+                opacity: 0, 
+                x: -30,
+                scale: 0.9,
+                y: 20
+              }}
+              animate={{ 
+                opacity: 1, 
+                x: 0,
+                scale: 1,
+                y: 0
+              }}
+              transition={{ 
+                delay: index * 0.15,
+                duration: 0.5,
+                type: "spring",
+                stiffness: 200,
+                damping: 20
+              }}
+              whileHover={{ 
+                scale: 1.02, 
+                y: -2,
+                transition: { duration: 0.2 }
+              }}
             >
               <div className="flex items-center gap-3">
                 {/* Checkbox */}
@@ -742,17 +1122,35 @@ const MemberDashboard = () => {
                 </motion.button>
 
                 {/* Goal Content */}
-                <div className="flex-1 min-w-0">
+                <motion.div 
+                  className="flex-1 min-w-0"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ 
+                    delay: index * 0.15 + 0.1,
+                    duration: 0.4,
+                    ease: [0.25, 0.1, 0.25, 1]
+                  }}
+                >
                   <h4 className={`text-sm font-heading font-semibold leading-tight ${
                     goal.completed ? 'text-text-light line-through' : 'text-text-dark'
                   }`}>
                     {goal.title}
                   </h4>
                   <p className="text-xs text-text-light mt-0.5 leading-tight">{goal.description}</p>
-                </div>
+                </motion.div>
 
                 {/* Progress/Status */}
-                <div className="flex items-center gap-3 flex-shrink-0">
+                <motion.div 
+                  className="flex items-center gap-3 flex-shrink-0"
+                  initial={{ opacity: 0, x: 10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ 
+                    delay: index * 0.15 + 0.2,
+                    duration: 0.4,
+                    ease: [0.25, 0.1, 0.25, 1]
+                  }}
+                >
                   {/* Interactive Progress Bar */}
                   {goal.progress !== undefined && (
                     <div className="flex items-center gap-2">
@@ -768,7 +1166,7 @@ const MemberDashboard = () => {
                       >
                         <motion.div
                           className={`h-full rounded-full ${
-                            goal.progress === 100
+                            goal.completed || goal.progress === 100
                               ? 'bg-success'
                               : goal.progress >= 75
                               ? 'bg-primary-blue'
@@ -779,22 +1177,49 @@ const MemberDashboard = () => {
                               : 'bg-danger'
                           }`}
                           initial={{ width: 0 }}
-                          animate={{ width: `${goal.progress}%` }}
-                          transition={{ duration: 0.3 }}
+                          animate={{ width: `${goal.completed ? 100 : goal.progress}%` }}
+                          transition={{ 
+                            delay: index * 0.15 + 0.3,
+                            duration: goal.completed ? 0.8 : 0.6,
+                            ease: goal.completed ? [0.34, 1.56, 0.64, 1] : [0.25, 0.1, 0.25, 1]
+                          }}
                         />
                       </div>
-                      <span className="text-xs font-medium text-text-light w-8 text-right">
-                        {goal.progress}%
-                      </span>
+                      <motion.span 
+                        className={`text-xs font-medium w-8 text-right ${
+                          goal.completed || goal.progress === 100 ? 'text-success font-bold' : 'text-text-light'
+                        }`}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ 
+                          opacity: 1, 
+                          scale: goal.completed || goal.progress === 100 ? 1.1 : 1
+                        }}
+                        transition={{ 
+                          delay: index * 0.15 + 0.4,
+                          duration: 0.3
+                        }}
+                      >
+                        {goal.completed ? 100 : goal.progress}%
+                      </motion.span>
                     </div>
                   )}
                   {/* Icon */}
-                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${
-                    goal.completed ? 'bg-success/20 text-success' : goal.iconBg + ' text-primary-blue'
-                  }`}>
+                  <motion.div 
+                    className={`w-9 h-9 rounded-lg flex items-center justify-center ${
+                      goal.completed ? 'bg-success/20 text-success' : goal.iconBg + ' text-primary-blue'
+                    }`}
+                    initial={{ opacity: 0, scale: 0, rotate: -180 }}
+                    animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                    transition={{ 
+                      delay: index * 0.15 + 0.25,
+                      type: "spring",
+                      stiffness: 300,
+                      damping: 20
+                    }}
+                  >
                     {getGoalIcon(goal.iconType)}
-                  </div>
-                </div>
+                  </motion.div>
+                </motion.div>
               </div>
             </motion.div>
           ))}
